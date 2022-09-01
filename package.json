@@ -9,6 +9,7 @@
   "author": "Mika Rinne, ORACLE",
   "license": "ISC",
   "dependencies": {
-    "node-oracledb": "^1.0.2"
+    "node-oracledb": "^1.0.2",
+    "oracledb": "^5.4.0"
   }
 }

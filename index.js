@@ -1,17 +1,16 @@
 const fs = require('fs');
 const oracledb = require('oracledb');
 
-libPath = process.env.HOME + 'instantclient_21_7';
-oracledb.initOracleClient({ libDir: libPath });
-oracledb.initOracleClient({configDir: '/Wallet'});
+libPath = process.env.HOME + '/node-oracledb/instantclient_21_7';
+oracledb.initOracleClient({ libDir: libPath, configDir: './Wallet/' });
 
 async function init() {
   try {
     // Create a connection pool which will later be accessed via the
     // pool cache as the 'default' pool.
     await oracledb.createPool({
-      user: 'demo',
-      password: 'demo',
+      user: 'admin',
+      password: 'WelcomeFolks123#!',
       connectString: 'apex_tp'
       // edition: 'ORA$BASE', // used for Edition Based Redefintion
       // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
