@@ -1,8 +1,7 @@
 const fs = require('fs');
 const oracledb = require('oracledb');
 
-libPath = process.env.HOME + '/node-oracledb/instantclient_21_7';
-oracledb.initOracleClient({ libDir: libPath, configDir: './Wallet/' });
+oracledb.initOracleClient({ libDir: '/instantclient_21_7', configDir: '/Wallet/' });
 
 async function init() {
   try {
