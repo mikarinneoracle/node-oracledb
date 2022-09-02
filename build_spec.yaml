@@ -7,13 +7,15 @@ env:
 steps:
   - type: Command
     command: |
+      export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
+      export atp_version='atp-${version}'
+      echo "Version: ${version}"
+      echo "Atp version: ${atp_version}"
+      sed -i "s/atp_version/${atp_version}/g" atp.yaml
+      sed -i "s/atp_version/${atp_version}/g" index.js
+      sed -i "s/atp_pwd/${password}/g" index.js
       #wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip --output-file instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
       wget https://objectstorage.eu-amsterdam-1.oraclecloud.com/p/A7NIZAaWW2_d56Mmhpuv5vXQxwPxLKA6Yj0qsrZUDxPcTFbyOsT1krYlRZ-AGIdY/n/frsxwtjslf35/b/oracledb/o/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
-      export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
-      echo "Version: ${version}"
-      sed -i "s/atp_version/${version}/g" atp.yaml
-      sed -i "s/atp_version/${version}/g" index.js
-      sed -i "s/atp_pwd/${password}/g" index.js
       yum -y install jq
       chmod +x ./kubectl
       oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaasljp3fqfq5pt32nnic5qs4njo45dmtaanwq2ccxnyckxcyljtn7q --file kconfig --region eu-amsterdam-1 --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
