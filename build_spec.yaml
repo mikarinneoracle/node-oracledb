@@ -8,7 +8,7 @@ steps:
   - type: Command
     command: |
       export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
-      export atp_version=${version}
+      export atp_version=atp.${version}
       export namespace=atp-${version}
       echo "Version: ${version}"
       echo "Atp version: ${atp_version}"
