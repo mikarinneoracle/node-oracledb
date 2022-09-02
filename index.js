@@ -9,8 +9,8 @@ async function init() {
     // pool cache as the 'default' pool.
     await oracledb.createPool({
       user: 'admin',
-      password: 'WelcomeFolks123#!',
-      connectString: 'apex_tp'
+      password: 'atp_pwd',
+      connectString: 'oracledb_tp'
       // edition: 'ORA$BASE', // used for Edition Based Redefintion
       // events: false, // whether to handle Oracle Database FAN and RLB events or support CQN
       // externalAuth: false, // whether connections should be established using External Authentication

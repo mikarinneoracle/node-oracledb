@@ -1,0 +1,26 @@
+version: 0.1             
+component: build
+timeoutInSeconds: 5000
+shell: bash
+env:
+  exportedVariables:
+steps:
+  - type: Command
+    command: |
+      wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip --output instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
+      export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
+      echo "Version: ${version}"
+      sed -i "s/version/${version}/g" atp.yaml
+      sed -i "s/atp_pwd/${password}/g" index.js
+      ./kubectl create secret generic admin-secret --from-literal=password=${password}
+      ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password}
+      ./kubectl create -f atp.yaml
+      sleep 180
+      ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."tnsnames.ora"' | tr -d '"' | base64 --decode > tnsnames.ora
+      ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."sqlnet.ora"' | tr -d '"' | base64 --decode > sqlnet.ora
+      ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."cwallet.sso"' | tr -d '"' | base64 --decode > cwallet.sso
+      sed -i "s|"?/network/admin"|"./Wallet"|g" sqlnet.ora
+      export docker_pass=$(oci secrets secret-bundle get --secret-id ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaauevftmqa2vodnotrpnxe2lutj2foenstze5gzpuxyswnrnrworga --query "data.\"secret-bundle-content\".content" | tr -d '"' | base64 -d)
+      docker login ams.ocir.io -u 'frsxwtjslf35/oracleidentitycloudservice/mika.rinne@oracle.com' -p ${docker_pass}
+      docker build -t ams.ocir.io/frsxwtjslf35/node-atp:{version} .
+      docker push ams.ocir.io/frsxwtjslf35/node-atp:${version}
