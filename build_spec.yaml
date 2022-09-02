@@ -12,6 +12,7 @@ steps:
       export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
       echo "Version: ${version}"
       sed -i "s/version/${version}/g" atp.yaml
+      sed -i "s/version/${version}/g" index.js
       sed -i "s/atp_pwd/${password}/g" index.js
       yum -y install jq
       chmod +x ./kubectl
