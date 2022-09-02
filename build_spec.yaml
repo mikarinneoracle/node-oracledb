@@ -9,10 +9,11 @@ steps:
     command: |
       export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
       export atp_version=ATP${version}
+      export namespace=atp-${version}
       echo "Version: ${version}"
       echo "Atp version: ${atp_version}A"
-      echo "Namespace version: atp-${version}A"
-      sed -i "s/atp_namespace/atp-${version}/g" atp.yaml
+      echo "Namespace: ${namespace}"
+      sed -i "s/atp_namespace/${namespace}/g" atp.yaml
       sed -i "s/atp_version/${atp_version}/g" atp.yaml
       sed -i "s/atp_version/${atp_version}/g" index.js
       sed -i "s/atp_pwd/${password}/g" index.js
@@ -22,15 +23,15 @@ steps:
       chmod +x ./kubectl
       oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaasljp3fqfq5pt32nnic5qs4njo45dmtaanwq2ccxnyckxcyljtn7q --file kconfig --region eu-amsterdam-1 --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
       export KUBECONFIG="kconfig"
-      ./kubectl create namespace ${atp_version}
-      ./kubectl create secret generic admin-secret --from-literal=password=${password} -n ${atp_version}
-      ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password} -n ${atp_version}
+      ./kubectl create namespace ${namespace}
+      ./kubectl create secret generic admin-secret --from-literal=password=${password} -n ${namespace}
+      ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password} -n ${namespace}
       ./kubectl create -f atp.yaml
       sleep 180
       mkdir Wallet
-      ./kubectl get secret wallet -n ${atp_version} -o jsonpath='{.data}' | jq '."tnsnames.ora"' | tr -d '"' | base64 --decode > ./Wallet/tnsnames.ora
-      ./kubectl get secret wallet -n ${atp_version} -o jsonpath='{.data}' | jq '."sqlnet.ora"' | tr -d '"' | base64 --decode > ./Wallet/sqlnet.ora
-      ./kubectl get secret wallet -n ${atp_version} -o jsonpath='{.data}' | jq '."cwallet.sso"' | tr -d '"' | base64 --decode > ./Wallet/cwallet.sso
+      ./kubectl get secret wallet -n ${namespace} -o jsonpath='{.data}' | jq '."tnsnames.ora"' | tr -d '"' | base64 --decode > ./Wallet/tnsnames.ora
+      ./kubectl get secret wallet -n ${namespace} -o jsonpath='{.data}' | jq '."sqlnet.ora"' | tr -d '"' | base64 --decode > ./Wallet/sqlnet.ora
+      ./kubectl get secret wallet -n ${namespace} -o jsonpath='{.data}' | jq '."cwallet.sso"' | tr -d '"' | base64 --decode > ./Wallet/cwallet.sso
       sed -i "s|"?/network/admin"|"./Wallet"|g" ./Wallet/sqlnet.ora      
       export docker_pass=$(oci secrets secret-bundle get --secret-id ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaauevftmqa2vodnotrpnxe2lutj2foenstze5gzpuxyswnrnrworga --query "data.\"secret-bundle-content\".content" | tr -d '"' | base64 -d)
       docker login ams.ocir.io -u 'frsxwtjslf35/oracleidentitycloudservice/mika.rinne@oracle.com' -p ${docker_pass}
