@@ -8,9 +8,11 @@ steps:
   - type: Command
     command: |
       export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
-      export atp_version=DB${version}
+      export atp_version=ATP${version}
       echo "Version: ${version}"
-      echo "Atp version: ${atp_version}"
+      echo "Atp version: ${atp_version}A"
+      echo "Namespace version: atp-${version}A"
+      sed -i "s/atp_namespace/atp-${version}/g" atp.yaml
       sed -i "s/atp_version/${atp_version}/g" atp.yaml
       sed -i "s/atp_version/${atp_version}/g" index.js
       sed -i "s/atp_pwd/${password}/g" index.js
