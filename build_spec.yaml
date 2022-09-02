@@ -16,10 +16,13 @@ steps:
       ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password}
       ./kubectl create -f atp.yaml
       sleep 180
+      mkdir Wallet
+      cd Wallet
       ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."tnsnames.ora"' | tr -d '"' | base64 --decode > tnsnames.ora
       ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."sqlnet.ora"' | tr -d '"' | base64 --decode > sqlnet.ora
       ./kubectl get secret wallet -o jsonpath='{.data}' | jq '."cwallet.sso"' | tr -d '"' | base64 --decode > cwallet.sso
       sed -i "s|"?/network/admin"|"./Wallet"|g" sqlnet.ora
+      cd ..
       export docker_pass=$(oci secrets secret-bundle get --secret-id ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaauevftmqa2vodnotrpnxe2lutj2foenstze5gzpuxyswnrnrworga --query "data.\"secret-bundle-content\".content" | tr -d '"' | base64 -d)
       docker login ams.ocir.io -u 'frsxwtjslf35/oracleidentitycloudservice/mika.rinne@oracle.com' -p ${docker_pass}
       docker build -t ams.ocir.io/frsxwtjslf35/node-atp:{version} .
