@@ -1,11 +1,11 @@
 apiVersion: oci.oracle.com/v1beta1
 kind: AutonomousDatabases
 metadata:
-  name: atp_version
+  name: oracledb
   namespace: atp_namespace
 spec:
   compartmentId: ocid1.compartment.oc1..aaaaaaaabwqnkg5r4sgb72edair3gaxqckws6p2qgxlyq67mnnqxvntwm4vq
-  displayName: atp_version
+  displayName: oracledb
   dbName: oracledb
   dbWorkload: OLTP
   isDedicated: false
