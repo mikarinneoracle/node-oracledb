@@ -4,8 +4,8 @@ metadata:
   name: oracledb
 spec:
   compartmentId: ocid1.compartment.oc1..aaaaaaaabwqnkg5r4sgb72edair3gaxqckws6p2qgxlyq67mnnqxvntwm4vq
-  displayName: oracledb-version
-  dbName: oracledb-version
+  displayName: version
+  dbName: version
   dbWorkload: OLTP
   isDedicated: false
   dbVersion: 19c
