@@ -12,6 +12,10 @@ steps:
       echo "Version: ${version}"
       sed -i "s/version/${version}/g" atp.yaml
       sed -i "s/atp_pwd/${password}/g" index.js
+      yum -y install jq
+      chmod +x ./kubectl
+      oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaasljp3fqfq5pt32nnic5qs4njo45dmtaanwq2ccxnyckxcyljtn7q --file kconfig --region eu-amsterdam-1 --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
+      export KUBECONFIG="kconfig"
       ./kubectl create secret generic admin-secret --from-literal=password=${password}
       ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password}
       ./kubectl create -f atp.yaml
