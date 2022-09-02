@@ -19,7 +19,7 @@ steps:
       oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaasljp3fqfq5pt32nnic5qs4njo45dmtaanwq2ccxnyckxcyljtn7q --file kconfig --region eu-amsterdam-1 --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
       export KUBECONFIG="kconfig"
       ./kubectl create namespace atp-${version} 
-      ./kubectl create secret wallet -n atp-${version}
+      ./kubectl delete secret wallet -n atp-${version}
       ./kubectl create secret generic admin-secret --from-literal=password=${password} -n atp-${version}
       ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password} -n atp-${version}
       ./kubectl create -f atp.yaml
