@@ -7,8 +7,8 @@ env:
 steps:
   - type: Command
     command: |
-      wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip --output-file instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
-      ls
+      #wget https://download.oracle.com/otn_software/linux/instantclient/217000/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip --output-file instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
+      wget https://objectstorage.eu-amsterdam-1.oraclecloud.com/p/A7NIZAaWW2_d56Mmhpuv5vXQxwPxLKA6Yj0qsrZUDxPcTFbyOsT1krYlRZ-AGIdY/n/frsxwtjslf35/b/oracledb/o/instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
       export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
       echo "Version: ${version}"
       sed -i "s/version/${version}/g" atp.yaml
