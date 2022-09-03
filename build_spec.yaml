@@ -33,4 +33,3 @@ steps:
       docker login ams.ocir.io -u 'frsxwtjslf35/oracleidentitycloudservice/mika.rinne@oracle.com' -p ${docker_pass}
       docker build -t ams.ocir.io/frsxwtjslf35/node-atp:${version} .
       docker push ams.ocir.io/frsxwtjslf35/node-atp:${version}
-      docker run -it ams.ocir.io/frsxwtjslf35/node-atp:${version}
