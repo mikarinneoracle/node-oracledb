@@ -7,8 +7,8 @@ env:
 steps:
   - type: Command
     command: |
-      version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
-      namespace=atp-${version}
+      export version=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-6 | rev`
+      export namespace=atp-${version}
       echo "Version: ${version}"
       echo "Namespace: ${namespace}"
       sed -i "s/atp_namespace/${namespace}/g" atp.yaml
@@ -17,13 +17,13 @@ steps:
       yum -y install jq
       chmod +x ./kubectl
       oci ce cluster create-kubeconfig --cluster-id ocid1.cluster.oc1.eu-amsterdam-1.aaaaaaaasljp3fqfq5pt32nnic5qs4njo45dmtaanwq2ccxnyckxcyljtn7q --file kconfig --region eu-amsterdam-1 --token-version 2.0.0  --kube-endpoint PUBLIC_ENDPOINT
-      KUBECONFIG="kconfig"
+      export KUBECONFIG="kconfig"
       ./kubectl create namespace ${namespace}
       ./kubectl create secret generic admin-secret --from-literal=password=${password} -n ${namespace}
       ./kubectl create secret generic wallet-secret --from-literal=walletPassword=${password} -n ${namespace}
       ./kubectl create -f atp.yaml
-      tries=0
-      atp_status=''
+      export tries=0
+      export atp_status=''
       while [ $tries -le 30 ] && [[ $atp_status != 'Active' ]] 
       do
           atp_status=$(kubectl get AutonomousDatabases -n ${namespace} -o json  | jq '.items[].status.status.conditions[].type' | tr -d '"')
@@ -36,7 +36,7 @@ steps:
       ./kubectl get secret wallet -n ${namespace} -o jsonpath='{.data}' | jq '."sqlnet.ora"' | tr -d '"' | base64 --decode > ./Wallet/sqlnet.ora
       ./kubectl get secret wallet -n ${namespace} -o jsonpath='{.data}' | jq '."cwallet.sso"' | tr -d '"' | base64 --decode > ./Wallet/cwallet.sso
       sed -i "s|"?/network/admin"|"./Wallet"|g" ./Wallet/sqlnet.ora      
-      docker_pass=$(oci secrets secret-bundle get --secret-id ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaauevftmqa2vodnotrpnxe2lutj2foenstze5gzpuxyswnrnrworga --query "data.\"secret-bundle-content\".content" | tr -d '"' | base64 -d)
+      export docker_pass=$(oci secrets secret-bundle get --secret-id ocid1.vaultsecret.oc1.eu-amsterdam-1.amaaaaaauevftmqa2vodnotrpnxe2lutj2foenstze5gzpuxyswnrnrworga --query "data.\"secret-bundle-content\".content" | tr -d '"' | base64 -d)
       docker login ams.ocir.io -u 'frsxwtjslf35/oracleidentitycloudservice/mika.rinne@oracle.com' -p ${docker_pass}
       docker build -t ams.ocir.io/frsxwtjslf35/node-atp:${version} .
       docker push ams.ocir.io/frsxwtjslf35/node-atp:${version}
