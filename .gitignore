@@ -2,3 +2,4 @@ instantclient-basic-linux.x64-21.7.0.0.0dbru.zip
 instantclient_21_7/
 node_modules/
 .DS_Store
+package-lock.json
